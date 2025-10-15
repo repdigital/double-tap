@@ -18,11 +18,6 @@ export default function FaqSection() {
         "We recommend a minimum of $25,000 in trading capital to effecively utilize our software licence. This allows for proper diversification and risk management across multiple positions and strategies.",
     },
     {
-      question: "How quickly can I see results?",
-      answer:
-        "While past performance doesn't guarantee future results, our clients typically see positive performance within the first 90 days. Our AI systems are designed for consistency over time rather than quick gains.",
-    },
-    {
       question: "Is my capital safe with Double Tap Trading?",
       answer:
         "You are utilizng prop firm funds, never your own capital. We provide trading signals and automation through secure API connections to regulated prop firms.",
