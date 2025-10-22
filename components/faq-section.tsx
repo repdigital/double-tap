@@ -25,7 +25,7 @@ export default function FaqSection() {
     {
       question: "Can I cancel my subscription anytime?",
       answer:
-        "Yes, you can cancel your subscription at any time with 30 days notice. We also offer a 30-day money-back guarantee if you're not satisfied with the service.",
+        "Yes, you can cancel your subscription at any time with 30 days notice.",
     },
     {
       question: "Do you provide training and support?",
