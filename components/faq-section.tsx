@@ -1,93 +1,94 @@
-"use client"
-import { motion } from "framer-motion"
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
+'use client'
 
-export default function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useState, useRef } from 'react'
+import { ChevronDown } from 'lucide-react'
+
+export default function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const ref = useRef<HTMLDivElement>(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   const faqs = [
     {
-      question: "How does AI-powered trading work?",
-      answer:
-        "Our AI systems analyze market data, news, and patterns in real-time to execute trades automatically. The AI learns from market conditions and adapts strategies without human emotion or bias, leading to more consistent execution.",
+      question: 'How does AI-powered trading work?',
+      answer: 'Our AI systems analyze market data, news, and patterns in real-time to execute trades automatically. The AI learns from market conditions and adapts strategies without human emotion or bias, leading to more consistent execution.'
     },
     {
       question: "What's the minimum capital requirement?",
-      answer:
-        "We recommend a minimum of $25,000 in trading capital to effecively utilize our software licence. This allows for proper diversification and risk management across multiple positions and strategies.",
+      answer: 'We recommend a minimum of $25,000 in trading capital to effectively utilize our software license. This allows for proper diversification and risk management across multiple positions and strategies.'
     },
     {
-      question: "Is my capital safe with Double Tap Trading?",
-      answer:
-        "You are utilizng prop firm funds, never your own capital. We provide trading signals and automation through secure API connections to regulated prop firms.",
+      question: 'Is my capital safe with Double Tap Trading?',
+      answer: 'You are utilizing prop firm funds, never your own capital. We provide trading signals and automation through secure API connections to regulated prop firms.'
     },
     {
-      question: "Can I cancel my subscription anytime?",
-      answer:
-        "Yes, you can cancel your subscription at any time with 30 days notice.",
+      question: 'Can I cancel my subscription anytime?',
+      answer: 'Yes, you can cancel your subscription at any time with 30 days notice.'
     },
     {
-      question: "Do you provide training and support?",
-      answer:
-        "Absolutely. All plans include comprehensive onboarding, training materials, and ongoing support. Professional and Enterprise plans include regular strategy calls and dedicated support.",
-    },
+      question: 'Do you provide training and support?',
+      answer: 'Absolutely. All plans include comprehensive onboarding, training materials, and ongoing support. Professional and Enterprise plans include regular strategy calls and dedicated support.'
+    }
   ]
 
   return (
-    <section className="py-24 bg-black">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <motion.h2
-            className="text-4xl md:text-5xl font-bold text-white mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Frequently Asked Questions
-          </motion.h2>
-          <motion.p
-            className="text-xl text-gray-300 max-w-3xl mx-auto font-medium" // added font-medium for medium bold weight
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Get answers to common questions about our AI trading systems
-          </motion.p>
-        </div>
+    <section id="faq" className="py-32 md:py-48 bg-muted/30">
+      <div ref={ref} className="container-wide">
+        {/* Section Header */}
+        <motion.div
+          className="mb-24"
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="font-display font-semibold text-foreground text-7xl mb-4">
+            Common Questions
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl">
+            Answers to frequently asked questions about our systems
+          </p>
+        </motion.div>
 
-        <div className="max-w-4xl mx-auto">
+        {/* FAQ List */}
+        <div className="max-w-4xl mx-auto space-y-6">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
-              className="border-b border-gray-700 last:border-b-0"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="bg-card border-l-4 border-l-transparent hover:border-l-primary transition-all duration-300"
+              initial={{ opacity: 0, y: 24 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+              transition={{ duration: 0.6, delay: index * 0.08 }}
             >
               <button
-                className="w-full py-6 px-4 text-left flex justify-between items-center hover:bg-gray-800/50 transition-colors"
+                className="w-full px-12 py-8 text-left flex justify-between items-start gap-6 hover:bg-muted/30 transition-colors"
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
               >
-                <h3 className="text-lg font-semibold text-white pr-4">{faq.question}</h3>
+                <h3 className="font-semibold text-foreground text-xl flex-1">
+                  {faq.question}
+                </h3>
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-400 transition-transform ${openIndex === index ? "rotate-180" : ""}`}
+                  className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-300 ${
+                    openIndex === index ? 'rotate-180' : ''
+                  }`}
                 />
               </button>
 
-              <motion.div
-                initial={false}
-                animate={{
-                  height: openIndex === index ? "auto" : 0,
-                  opacity: openIndex === index ? 1 : 0,
-                }}
-                transition={{ duration: 0.3 }}
-                className="overflow-hidden"
-              >
-                <div className="px-4 pb-6">
-                  <p className="text-gray-300 leading-relaxed">{faq.answer}</p>
-                </div>
-              </motion.div>
+              <AnimatePresence>
+                {openIndex === index && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-12 pb-8 text-muted-foreground leading-relaxed text-lg">
+                      {faq.answer}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           ))}
         </div>
