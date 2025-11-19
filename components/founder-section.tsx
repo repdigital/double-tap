@@ -15,6 +15,7 @@ export default function FounderSection() {
   return (
     <section id="founder" className="py-16 md:py-24 bg-background">
       <div ref={ref} className="container-wide">
+
         {/* Section Label */}
         <motion.div
           className="font-mono text-sm uppercase tracking-wide text-muted-foreground mb-12 text-center lg:text-left"
@@ -28,13 +29,14 @@ export default function FounderSection() {
         {/* Main Composition */}
         <div className="relative max-w-[1200px] mx-auto min-h-[900px] lg:min-h-[800px]">
 
-          {/* Enhanced Portrait with ALL 4 layers */}
+          {/* Enhanced Portrait / Logo Frame */}
           <motion.div
             className="portrait-wrapper relative mx-auto lg:mx-0 lg:w-[65%] max-w-[700px]"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
+
             {/* LAYER 1 & 2: Gradient Border + Glow Shadow */}
             <div
               className="portrait-frame transition-shadow duration-[400ms]"
@@ -56,26 +58,30 @@ export default function FounderSection() {
                 `,
               }}
             >
-              {/* LAYER 3 & 4: Portrait Container with Duotone */}
-              <div className="portrait-container relative overflow-hidden rounded-[20px]" style={{ height: '700px' }}>
-                {/* Image with CSS Duotone Filter */}
+
+              {/* LAYER 3 & 4: Logo Container */}
+              <div
+                className="portrait-container relative overflow-hidden rounded-[20px] flex items-center justify-center bg-background"
+                style={{ height: '700px' }}
+              >
+                {/* Light Mode Logo (dark version) */}
                 <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-ZTq2c84zmCuc5NdieuKVSGUQsiu6o5.png"
-                  alt="Michael Gonzalez"
-                  fill
-                  className="object-cover"
+                  src="/dtt-square-logo.png"
+                  alt="Double Tap Trading Logo"
+                  width={500}
+                  height={500}
+                  className="object-contain block dark:hidden"
                   priority
-                  quality={90}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 700px"
-                  style={{
-                    filter: `
-                      saturate(0.7)
-                      contrast(1.1)
-                      brightness(0.95)
-                      sepia(0.15)
-                      hue-rotate(-10deg)
-                    `
-                  }}
+                />
+
+                {/* Dark Mode Logo (white version) */}
+                <Image
+                  src="/icon-512x512.png"
+                  alt="Double Tap Trading Logo"
+                  width={500}
+                  height={500}
+                  className="object-contain hidden dark:block"
+                  priority
                 />
 
                 {/* Duotone Gradient Overlay */}
