@@ -40,6 +40,36 @@
   --dt-data-accent-1: #0EA5E9;
   --dt-data-accent-2: #8B5CF6;
 
+  /* ========== ANALYTICS PAGE (Inverted Theme) ========== */
+  /* Light mode uses dark backgrounds */
+  --analytics-bg-primary: #0A0A0A;
+  --analytics-bg-secondary: #1A1A1A;
+  --analytics-bg-tertiary: #2A2A2A;
+  --analytics-text-primary: #FFFFFF;
+  --analytics-text-secondary: #B4B4B4;
+  --analytics-text-muted: #6B6B6B;
+  --analytics-border-primary: #2A2A2A;
+  --analytics-border-hover: #3A3A3A;
+  --analytics-positive: #04A04E;
+  --analytics-negative: #EF4444;
+  --analytics-neutral: #6B7280;
+  --analytics-accent-1: #3B82F6;
+  --analytics-accent-2: #8B5CF6;
+  --analytics-accent-3: #F59E0B;
+
+  /* ========== MASTERY PAGE (Luxurious Gold + Black) ========== */
+  --mastery-gold: #D4AF37;
+  --mastery-gold-dark: #B8941F;
+  --mastery-gold-light: #F4E4B0;
+  --mastery-gold-pale: #FBF7ED;
+  --mastery-black: #000000;
+  --mastery-charcoal: #0F0F0F;
+  --mastery-dark-gray: #1A1A1A;
+  --mastery-medium-gray: #2A2A2A;
+  --mastery-text-primary: #FFFFFF;
+  --mastery-text-secondary: #B4B4B4;
+  --mastery-text-muted: #6B6B6B;
+
   /* ========== SEMANTIC COLORS (Light Theme) ========== */
   --background: var(--dt-white);
   --foreground: var(--dt-black);
@@ -131,6 +161,18 @@
   --dt-gray-100: #141414;
   --dt-gray-50: #0F0F0F;
   --dt-white: #0A0A0A;
+
+  /* Analytics Page (Inverted Theme) - Dark mode uses light backgrounds */
+  --analytics-bg-primary: #FAFAFA;
+  --analytics-bg-secondary: #FFFFFF;
+  --analytics-bg-tertiary: #F5F5F5;
+  --analytics-text-primary: #0A0A0A;
+  --analytics-text-secondary: #525252;
+  --analytics-text-muted: #A3A3A3;
+  --analytics-border-primary: #E5E5E5;
+  --analytics-border-hover: #D4D4D4;
+  --analytics-positive: #03873E;
+  --analytics-negative: #DC2626;
 
   --background: var(--dt-white);
   --foreground: var(--dt-black);

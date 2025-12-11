@@ -1,7 +1,8 @@
 'use client'
 
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import { GeometricFrame } from './GeometricFrame'
 import { QuoteCard } from './QuoteCard'
@@ -11,6 +12,12 @@ import { Attribution } from './Attribution'
 export default function FounderSection() {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const { resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <section id="founder" className="py-16 md:py-24 bg-background">
@@ -56,29 +63,24 @@ export default function FounderSection() {
                 `,
               }}
             >
-              {/* LAYER 3 & 4: Portrait Container with Duotone */}
-              <div className="portrait-container relative overflow-hidden rounded-[20px]" style={{ height: '700px' }}>
-                {/* Image with CSS Duotone Filter */}
-                <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-ZTq2c84zmCuc5NdieuKVSGUQsiu6o5.png"
-                  alt="Michael Gonzalez"
-                  fill
-                  className="object-cover"
-                  priority
-                  quality={90}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 700px"
-                  style={{
-                    filter: `
-                      saturate(0.7)
-                      contrast(1.1)
-                      brightness(0.95)
-                      sepia(0.15)
-                      hue-rotate(-10deg)
-                    `
-                  }}
-                />
+              {/* LAYER 3 & 4: Logo Container */}
+              <div className="portrait-container relative overflow-hidden rounded-[20px] bg-background flex items-center justify-center" style={{ height: '700px' }}>
+                {/* Double Tap Logo with theme switching */}
+                {mounted && (
+                  <div className="relative w-full h-full flex items-center justify-center p-12">
+                    <Image
+                      src={resolvedTheme === 'dark' ? '/dtt-logo-dark.png' : '/dtt-banner-light.png'}
+                      alt="Double Tap Trading"
+                      width={600}
+                      height={200}
+                      className="object-contain"
+                      priority
+                      quality={90}
+                    />
+                  </div>
+                )}
 
-                {/* Duotone Gradient Overlay */}
+                {/* Subtle Gradient Overlay */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{

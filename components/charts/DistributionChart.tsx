@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import { createChart, IChartApi } from 'lightweight-charts'
 import { useTheme } from 'next-themes'
 import { getLightTheme, getDarkTheme, getHistogramSeriesStyle } from '@/lib/tradingview-themes'
-import { generateDistributionData } from '@/lib/mock-data'
+import { getStaticDistribution, getStaticEquityCurve } from '@/lib/transparency-data'
 
 interface DistributionChartProps {
   height?: number
@@ -16,6 +16,20 @@ export function DistributionChart({ height = 400 }: DistributionChartProps) {
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === 'dark'
 
+  // Calculate stats from equity curve
+  const { equity } = getStaticEquityCurve()
+  const dailyReturns: number[] = []
+  for (let i = 1; i < equity.length; i++) {
+    const dailyReturn = ((equity[i].value - equity[i-1].value) / equity[i-1].value) * 100
+    dailyReturns.push(dailyReturn)
+  }
+
+  const mean = dailyReturns.length > 0 ? dailyReturns.reduce((sum, r) => sum + r, 0) / dailyReturns.length : 0
+  const sortedReturns = [...dailyReturns].sort((a, b) => a - b)
+  const median = sortedReturns.length > 0 ? sortedReturns[Math.floor(sortedReturns.length / 2)] : 0
+  const variance = dailyReturns.length > 0 ? dailyReturns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) / dailyReturns.length : 0
+  const stdDev = Math.sqrt(variance)
+
   useEffect(() => {
     if (!chartContainerRef.current) return
 
@@ -23,12 +37,15 @@ export function DistributionChart({ height = 400 }: DistributionChartProps) {
       ...(isDark ? getDarkTheme() : getLightTheme()),
       width: chartContainerRef.current.clientWidth,
       height,
+      timeScale: {
+        visible: false, // Hide time scale since we're showing distribution bins
+      },
     })
 
     chartRef.current = chart
 
-    // Generate distribution data
-    const distributionData = generateDistributionData()
+    // Use static distribution data (consistent, doesn't change)
+    const distributionData = getStaticDistribution()
 
     // Add histogram series
     const histogramSeries = chart.addHistogramSeries({
@@ -82,15 +99,21 @@ export function DistributionChart({ height = 400 }: DistributionChartProps) {
       {/* Stats below chart */}
       <div className="grid grid-cols-3 gap-4 text-center">
         <div>
-          <div className="font-mono text-sm text-primary font-semibold">+0.31%</div>
+          <div className="font-mono text-sm text-primary font-semibold">
+            {mean >= 0 ? '+' : ''}{mean.toFixed(2)}%
+          </div>
           <div className="text-xs text-muted-foreground">Mean Return</div>
         </div>
         <div>
-          <div className="font-mono text-sm text-foreground font-semibold">+0.28%</div>
+          <div className="font-mono text-sm text-foreground font-semibold">
+            {median >= 0 ? '+' : ''}{median.toFixed(2)}%
+          </div>
           <div className="text-xs text-muted-foreground">Median Return</div>
         </div>
         <div>
-          <div className="font-mono text-sm text-foreground font-semibold">1.24%</div>
+          <div className="font-mono text-sm text-foreground font-semibold">
+            {stdDev.toFixed(2)}%
+          </div>
           <div className="text-xs text-muted-foreground">Std Deviation</div>
         </div>
       </div>

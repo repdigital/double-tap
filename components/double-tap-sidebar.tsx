@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import Image from 'next/image'
-import { Home, Layers, TrendingUp, HelpCircle, MessageSquare, LogIn, FileText } from 'lucide-react'
+import { Home, Layers, TrendingUp, HelpCircle, MessageSquare, LogIn, FileText, Crown } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -34,13 +35,22 @@ const homepageNavItems = [
 
 // External pages
 const externalNavItems = [
+  { label: 'Analytics', id: 'analytics', icon: TrendingUp, href: '/analytics' },
   { label: 'How Prop Firms Cheat', id: 'manifesto', icon: FileText, href: '/manifesto' },
+  { label: 'Trading Mastery', id: 'mastery', icon: Crown, href: '/mastery' },
 ]
 
 export function DoubleTapSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const { theme, resolvedTheme } = useTheme()
   const [activeSection, setActiveSection] = useState('hero')
+  const [mounted, setMounted] = useState(false)
+
+  // Hydration safety
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Set active based on route
   useEffect(() => {
@@ -120,14 +130,16 @@ export function DoubleTapSidebar() {
             }}
           >
             <div className="group-data-[collapsible=icon]:hidden">
-              <Image
-                src="/double-tap-logo.png"
-                alt="Double Tap Trading"
-                width={138}
-                height={46}
-                className="h-10 w-auto"
-                priority
-              />
+              {mounted && (
+                <Image
+                  src={resolvedTheme === 'dark' ? '/dtt-logo-dark.png' : '/dtt-banner-light.png'}
+                  alt="Double Tap Trading"
+                  width={138}
+                  height={46}
+                  className="h-10 w-auto"
+                  priority
+                />
+              )}
             </div>
             <div className="hidden group-data-[collapsible=icon]:block">
               <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-display font-bold text-sm">

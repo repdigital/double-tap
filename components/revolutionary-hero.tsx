@@ -101,7 +101,7 @@ export const RevolutionaryHero = () => {
                 transition={{ duration: 0.6, delay: 1.0 }}
               >
                 <p>Beat prop firms at their own game. DoD-trained quants.</p>
-                <p>94% challenge pass rate. 9 days to funded accounts.</p>
+                <p>94% challenge pass rate. Average of 9 days to funded.</p>
               </motion.div>
 
               {/* CTA Button */}

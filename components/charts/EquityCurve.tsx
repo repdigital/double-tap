@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import { createChart, IChartApi } from 'lightweight-charts'
 import { useTheme } from 'next-themes'
 import { getLightTheme, getDarkTheme, getAreaSeriesStyle } from '@/lib/tradingview-themes'
-import { generateEquityCurveData } from '@/lib/mock-data'
+import { getStaticEquityCurve } from '@/lib/transparency-data'
 
 interface EquityCurveProps {
   height?: number
@@ -27,8 +27,8 @@ export function EquityCurve({ height = 400 }: EquityCurveProps) {
 
     chartRef.current = chart
 
-    // Generate equity curve data
-    const { equity, drawdowns } = generateEquityCurveData(365)
+    // Use static equity curve data (consistent, doesn't change)
+    const { equity, drawdowns } = getStaticEquityCurve()
 
     // Sort and deduplicate data to avoid duplicate timestamps
     const sortedEquity = [...equity]

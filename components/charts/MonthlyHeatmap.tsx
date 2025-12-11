@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useTheme } from 'next-themes'
-import { generateMonthlyReturnsData } from '@/lib/mock-data'
+import { getStaticMonthlyReturns } from '@/lib/transparency-data'
 
 interface MonthlyHeatmapProps {
   height?: number
@@ -14,20 +14,13 @@ export function MonthlyHeatmap({ height = 400 }: MonthlyHeatmapProps) {
   const [hoveredCell, setHoveredCell] = useState<{ year: number; month: number } | null>(null)
   const [mounted, setMounted] = useState(false)
 
-  // Generate data once on mount to avoid hydration mismatch
-  const data = useMemo(() => generateMonthlyReturnsData(), [])
-  const years = useMemo(() => [...new Set(data.map(d => d.year))].sort(), [data])
+  // Use static data (consistent, doesn't change)
+  const data = useMemo(() => getStaticMonthlyReturns(), [])
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  // Get return for specific year/month
-  const getReturn = (year: number, month: number) => {
-    const item = data.find(d => d.year === year && d.month === month)
-    return item?.return || null
-  }
 
   // Color scale function
   const getColor = (value: number | null): string => {
@@ -51,62 +44,92 @@ export function MonthlyHeatmap({ height = 400 }: MonthlyHeatmapProps) {
 
   return (
     <div className="w-full" style={{ height: `${height}px` }}>
-      <div className="h-full flex flex-col">
-        {/* Month labels */}
-        <div className="grid grid-cols-[60px_repeat(12,1fr)] gap-1 mb-2">
-          <div className="text-xs text-muted-foreground" />
-          {months.map((month) => (
-            <div key={month} className="text-xs text-center text-muted-foreground font-mono">
-              {month}
-            </div>
-          ))}
-        </div>
+      <div className="h-full flex flex-col justify-between py-4">
+        {/* 2x6 Grid - Last 12 Months */}
+        <div className="flex-1 flex flex-col gap-3">
+          {/* Row 1 - Months 1-6 */}
+          <div className="grid grid-cols-6 gap-2 flex-1">
+            {data.slice(0, 6).map((item, idx) => {
+              const isHovered = hoveredCell?.year === item.year && hoveredCell?.month === item.month
 
-        {/* Heatmap grid */}
-        <div className="flex-1 flex flex-col gap-1">
-          {years.map((year) => (
-            <div key={year} className="grid grid-cols-[60px_repeat(12,1fr)] gap-1 flex-1">
-              {/* Year label */}
-              <div className="text-xs text-muted-foreground font-mono flex items-center">
-                {year}
-              </div>
+              return (
+                <div
+                  key={`${item.year}-${item.month}`}
+                  className="relative rounded-lg transition-all duration-200 cursor-pointer flex flex-col items-center justify-center p-2"
+                  style={{
+                    backgroundColor: getColor(item.return),
+                    transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                    zIndex: isHovered ? 10 : 1,
+                  }}
+                  onMouseEnter={() => setHoveredCell({ year: item.year, month: item.month })}
+                  onMouseLeave={() => setHoveredCell(null)}
+                >
+                  <div className="text-[10px] font-mono text-white/60 mb-1">
+                    {months[item.month]}
+                  </div>
+                  <div className="text-xs font-mono font-semibold text-white">
+                    {item.return > 0 ? '+' : ''}{item.return.toFixed(1)}%
+                  </div>
 
-              {/* Month cells */}
-              {[...Array(12)].map((_, monthIndex) => {
-                const month = monthIndex + 1
-                const returnValue = getReturn(year, month)
-                const isHovered = hoveredCell?.year === year && hoveredCell?.month === month
-
-                return (
-                  <div
-                    key={`${year}-${month}`}
-                    className="relative rounded transition-all duration-200 cursor-pointer"
-                    style={{
-                      backgroundColor: getColor(returnValue),
-                      transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-                      zIndex: isHovered ? 10 : 1,
-                    }}
-                    onMouseEnter={() => setHoveredCell({ year, month })}
-                    onMouseLeave={() => setHoveredCell(null)}
-                  >
-                    {/* Tooltip */}
-                    {isHovered && returnValue !== null && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-card border border-border rounded-lg shadow-lg whitespace-nowrap z-20">
-                        <div className="text-xs font-mono">
-                          <div className="text-muted-foreground mb-1">
-                            {months[monthIndex]} {year}
-                          </div>
-                          <div className={`font-semibold ${returnValue > 0 ? 'text-primary' : 'text-destructive'}`}>
-                            {returnValue > 0 ? '+' : ''}{returnValue.toFixed(2)}%
-                          </div>
+                  {/* Tooltip on hover */}
+                  {isHovered && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-card border border-border rounded-lg shadow-lg whitespace-nowrap z-20">
+                      <div className="text-xs font-mono">
+                        <div className="text-muted-foreground mb-1">
+                          {months[item.month]} {item.year}
+                        </div>
+                        <div className={`font-semibold ${item.return > 0 ? 'text-primary' : 'text-destructive'}`}>
+                          {item.return > 0 ? '+' : ''}{item.return.toFixed(2)}%
                         </div>
                       </div>
-                    )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Row 2 - Months 7-12 */}
+          <div className="grid grid-cols-6 gap-2 flex-1">
+            {data.slice(6, 12).map((item, idx) => {
+              const isHovered = hoveredCell?.year === item.year && hoveredCell?.month === item.month
+
+              return (
+                <div
+                  key={`${item.year}-${item.month}`}
+                  className="relative rounded-lg transition-all duration-200 cursor-pointer flex flex-col items-center justify-center p-2"
+                  style={{
+                    backgroundColor: getColor(item.return),
+                    transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                    zIndex: isHovered ? 10 : 1,
+                  }}
+                  onMouseEnter={() => setHoveredCell({ year: item.year, month: item.month })}
+                  onMouseLeave={() => setHoveredCell(null)}
+                >
+                  <div className="text-[10px] font-mono text-white/60 mb-1">
+                    {months[item.month]}
                   </div>
-                )
-              })}
-            </div>
-          ))}
+                  <div className="text-xs font-mono font-semibold text-white">
+                    {item.return > 0 ? '+' : ''}{item.return.toFixed(1)}%
+                  </div>
+
+                  {/* Tooltip on hover */}
+                  {isHovered && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-card border border-border rounded-lg shadow-lg whitespace-nowrap z-20">
+                      <div className="text-xs font-mono">
+                        <div className="text-muted-foreground mb-1">
+                          {months[item.month]} {item.year}
+                        </div>
+                        <div className={`font-semibold ${item.return > 0 ? 'text-primary' : 'text-destructive'}`}>
+                          {item.return > 0 ? '+' : ''}{item.return.toFixed(2)}%
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
 
         {/* Legend */}
