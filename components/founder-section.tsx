@@ -129,7 +129,7 @@ export default function FounderSection() {
           {/* Attribution Signature */}
           <Attribution
             name="Michael Gonzalez"
-            title="CEO"
+            title="CEO "
             isInView={isInView}
           />
         </div>
